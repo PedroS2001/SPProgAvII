@@ -1,8 +1,8 @@
 require('dotenv').config();
 
 const express = require('express');
-const cors = require('cors');
-const animalRouter = require('./routes/animalRouter');
+///const cors = require('cors');
+const mascotaRouter = require('./routes/mascotasRouter');
 
 const app = express();
 
@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 require('./db/mongo');
 
-app.use('/api/animal', animalRouter);
+app.use('/api/mascota', mascotaRouter);
 
 
 const PORT = process.env.PORT;

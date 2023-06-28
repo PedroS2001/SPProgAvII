@@ -8,10 +8,11 @@ const userSchema = new mongoose.Schema({
 
 //Para que al devolverlo no me traiga todos los datos, lo mapeo quitandole el __id (object de mongo) y el __v. y le agrego un id en string
 userSchema.set('toJSON', {
-    transform: (document, animalJSON) => {
-        animalJSON.id = document._id.toString();
-        delete animalJSON._id;
-        delete animalJSON.__v;
+    transform: (document, userJSON) => {
+        userJSON.id = document._id.toString();
+        delete userJSON._id;
+        delete userJSON.__v;
+        delete userJSON.clave;
     }
 });
 
