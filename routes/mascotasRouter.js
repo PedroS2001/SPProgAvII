@@ -1,6 +1,8 @@
 const mascotaRouter = require('express').Router();
+const { verifyToken } = require('../middlewares/auth');
 const Mascota = require('../model/mascota');
 
+mascotaRouter.use(verifyToken);
 
 mascotaRouter.get('/', (req, res) => {
     Mascota.find({}).then((mascotas) => {

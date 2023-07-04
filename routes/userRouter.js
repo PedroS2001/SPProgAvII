@@ -1,6 +1,7 @@
 const userRouter = require('express').Router();
+const jwt = require('jsonwebtoken');
 const User = require('../model/user');
-
+const { SECRET } = require('../utils/config')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -18,7 +19,7 @@ userRouter.get('/:correo', (req, res) => {
     const { correo } = req.params;
     console.log(correo);
 
-    User.find({ correo })
+    User.findOne({ correo })
         .then((usuario) => {
             if (usuario) {
                 console.log(usuario);
@@ -47,29 +48,32 @@ userRouter.post('/', async (req, res) => {
         .catch(err => {
             res.status(400).json(err);
         })
-
 });
 
 
-userRouter.post('/login', (req, res) => {
+userRouter.post('/login', async (req, res) => {
     console.log(req.body);
     const { correo, clave } = req.body;
 
-    User.findOne({ correo, clave })
-        .then((usuario) => {
-            if (usuario) {
-                console.log(usuario);
-                res.json(usuario);
-            } else {
-                res.status(404).end();
-            }
-        })
-        .catch(err => {
-            res.status(400).json({ msg: "Ocurrio un error" })
-        })
+    const user = await User.findOne({ correo });
+
+    let correctPass = false;
+    if (user != null) {
+        correctPass = await bcrypt.compare(clave, user.clave);
+    }
+
+    if (!correctPass) {
+        res.status(401).json({ error: "Usuario o contraseña incorrectos" });
+    } else {
+        const userToken = {
+            username: user.correo,
+            id: user.id
+        }
+        const token = await jwt.sign(userToken, SECRET, { expiresIn: 120 });
+        res.json({ token });
+    }
 });
 
- 
 
 
 

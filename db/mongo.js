@@ -1,8 +1,10 @@
 const { connect } = require('mongoose');
+const { DB_URI } = require('../utils/config');
+
 
 const conectarDB = async () => {
     try {
-        return connect(process.env.DB_URI);
+        return connect(DB_URI);
     } catch (error) { }
 }
 
