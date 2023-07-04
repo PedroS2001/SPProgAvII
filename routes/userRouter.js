@@ -7,10 +7,12 @@ const saltRounds = 10;
 
 
 
-userRouter.get('/', (req, res) => {
+userRouter.get('/', (req, res, next) => {
     User.find({}).then((users) => {
         console.log(users);
         res.json(users);
+    }).catch(err => {
+        next(err)
     })
 })
 
@@ -25,16 +27,16 @@ userRouter.get('/:correo', (req, res) => {
                 console.log(usuario);
                 res.json(usuario);
             } else {
-                res.status(404).end();
+                next();
             }
         })
         .catch(err => {
-            res.status(400).json({ msg: "Ocurrio un error" })
+            next(err);
         })
 });
 
 
-userRouter.post('/', async (req, res) => {
+userRouter.post('/', async (req, res, next) => {
     console.log(req.body);
     const { correo, clave } = req.body;
 
@@ -46,12 +48,12 @@ userRouter.post('/', async (req, res) => {
             res.send(usuario);
         })
         .catch(err => {
-            res.status(400).json(err);
+            return next(err);
         })
 });
 
 
-userRouter.post('/login', async (req, res) => {
+userRouter.post('/login', async (req, res, next) => {
     console.log(req.body);
     const { correo, clave } = req.body;
 
@@ -63,15 +65,14 @@ userRouter.post('/login', async (req, res) => {
     }
 
     if (!correctPass) {
-        res.status(401).json({ error: "Usuario o contraseña incorrectos" });
-    } else {
-        const userToken = {
-            username: user.correo,
-            id: user.id
-        }
-        const token = await jwt.sign(userToken, SECRET, { expiresIn: 120 });
-        res.json({ token });
+        return next({ name: "ValidationError", message: "Usuario o contraseña incorrectos" });
     }
+    const userToken = {
+        username: user.correo,
+        id: user.id
+    }
+    const token = await jwt.sign(userToken, SECRET, { expiresIn: 120 });
+    res.json({ token });
 });
 
 

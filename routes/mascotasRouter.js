@@ -11,7 +11,7 @@ mascotaRouter.get('/', (req, res) => {
     })
 })
 
-mascotaRouter.get('/:id', (req, res) => {
+mascotaRouter.get('/:id', (req, res, next) => {
     const { id } = req.params;
     console.log(id);
     Mascota.findById(id)
@@ -20,15 +20,15 @@ mascotaRouter.get('/:id', (req, res) => {
                 console.log(mascota);
                 res.json(mascota);
             } else {
-                res.status(404).end();
+                next();
             }
         })
         .catch(err => {
-            res.status(400).json({ msg: "No se encontro la mascota" })
+            next({ name: "TokenError", message: "Er" });
         })
 });
 
-mascotaRouter.post('/', (req, res) => {
+mascotaRouter.post('/', (req, res, next) => {
     console.log(req.body);
     const { nombre, edad, tipo, vacunado, observaciones } = req.body;
 
@@ -40,12 +40,12 @@ mascotaRouter.post('/', (req, res) => {
             res.send(masc);
         })
         .catch(err => {
-            res.status(400).json(err.message)
+            next(err);
         })
 });
 
 
-mascotaRouter.delete("/:id", (req, res) => {
+mascotaRouter.delete("/:id", (req, res, next) => {
     const { id } = req.params;
 
     Mascota.findByIdAndDelete(id)
@@ -53,14 +53,14 @@ mascotaRouter.delete("/:id", (req, res) => {
             if (masc) {
                 res.status(204).end();
             }
-            res.status(404).end()
+            next({ name: "ReferenceError", message: "No se encontro la mascota" });
         })
         .catch((err) => {
-            res.status(400).end();
+            next(err);
         })
 })
 
-mascotaRouter.put("/:id", (req, res) => {
+mascotaRouter.put("/:id", (req, res, next) => {
     const { id } = req.params;
     const { nombre, edad, tipo, vacunado, observaciones } = req.body;
 
@@ -70,10 +70,10 @@ mascotaRouter.put("/:id", (req, res) => {
                 console.log(masc);
                 res.json(masc);
             }
-            res.status(404).end()
+            next({ name: "ReferenceError", message: "No se encontro la mascota" });
         })
         .catch(err => {
-            res.status(400).json(err.message)
+            next(err)
         })
 })
 

@@ -13,11 +13,11 @@ const verifyToken = async (req, res, next) => {
             next();
 
         } catch (error) {
-            res.status(401).json({ error: "Token invalido" });
+            next({ name: "InvalidTokenError", message: "El token es invalido" });
         }
     }
     else {
-        res.status(401).json({ error: "Se requiere token" });
+        next({ name: "TokenError", message: "Se requiere el token" });
     }
 }
 
