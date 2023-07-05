@@ -71,7 +71,7 @@ userRouter.post('/login', async (req, res, next) => {
         username: user.correo,
         id: user.id
     }
-    const token = await jwt.sign(userToken, SECRET, { expiresIn: 120 });
+    const token = await jwt.sign(userToken, SECRET, { expiresIn: 5000 });
     res.json({ token });
 });
 

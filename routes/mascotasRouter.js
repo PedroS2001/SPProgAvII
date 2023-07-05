@@ -1,6 +1,7 @@
 const mascotaRouter = require('express').Router();
 const { verifyToken } = require('../middlewares/auth');
 const Mascota = require('../model/mascota');
+const Tipo = require('../model/tipo');
 
 mascotaRouter.use(verifyToken);
 
@@ -8,6 +9,13 @@ mascotaRouter.get('/', (req, res) => {
     Mascota.find({}).then((mascotas) => {
         console.log(mascotas);
         res.json(mascotas);
+    })
+})
+
+mascotaRouter.get('/tipos', (req, res) => {
+    Tipo.find({}).then((tipos) => {
+        console.log(tipos);
+        res.json(tipos);
     })
 })
 
@@ -76,8 +84,6 @@ mascotaRouter.put("/:id", (req, res, next) => {
             next(err)
         })
 })
-
-
 
 
 
